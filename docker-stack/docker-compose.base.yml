@@ -1,0 +1,35 @@
+version: '3'
+services:
+  phpipam:
+    image: 146686453577.dkr.ecr.us-east-2.amazonaws.com/secom-phpipam:phpipam
+    environment:
+      - MYSQL_ENV_MYSQL_HOST
+      - MYSQL_ENV_MYSQL_PASSWORD
+      - NGINX_HOST=_
+      - MYSQL_ENV_MYSQL_USER=phpipam
+  dbnode:
+    image: 146686453577.dkr.ecr.us-east-2.amazonaws.com/secom-phpipam:mariadb-galera-swarm
+    ports:
+      - "3309:3309"
+      - "4444:4444"
+      - "4567:4567"
+      - "4567:4567/udp"
+      - "4568:4568"
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      - NODE_ADDRESS
+      - BOOTSTRAP_IF_ALONE
+      - XTRABACKUP_PASSWORD
+      - MYSQL_PASSWORD
+      - SSL_CA_CERT_B64
+      - SSL_SERVER_KEY_B64
+      - SSL_SERVER_CERT_B64
+      - SSL_CLIENT_KEY_B64
+      - SSL_CLIENT_CERT_B64
+      - MYSQL_USER=phpipam
+      - MYSQL_DATABASE=phpipam
+      - HEALTHY_WHILE_BOOTING=0
+      - GALERA_SSL=1
+      - TZ=America/Denver
+    command: node ${GALERA_CLUSTER_ADDRS} --wsrep-provider-options=ist.recv_bind=0.0.0.0\;gcache.size=128M\;pc.weight=${DBNODE_GALERA_WEIGHT} --wsrep-dirty-reads=ON

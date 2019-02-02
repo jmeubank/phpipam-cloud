@@ -1,0 +1,18 @@
+version: '3'
+services:
+  phpipam:
+    ports:
+      - "80:80"
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: us-east-2
+        awslogs-group: secom-phpipam
+        awslogs-stream-prefix: phpipam
+  dbnode:
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: us-east-2
+        awslogs-group: secom-phpipam
+        awslogs-stream-prefix: dbnode

@@ -1,0 +1,19 @@
+version: 1
+task_definition:
+  ecs_network_mode: host
+  services:
+    phpipam:
+      essential: false
+      mem_reservation: 268435456
+    dbnode:
+      essential: true
+      mem_reservation: 268435456
+run_params:
+  network_configuration:
+    awsvpc_configuration:
+      subnets:
+        - subnet-10b9e278
+        - subnet-df1584a5
+        - subnet-e6f109aa
+      security_groups: 
+        - sg-0dfed16b1ce2632b4
