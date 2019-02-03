@@ -10,9 +10,13 @@ services:
         awslogs-group: secom-phpipam
         awslogs-stream-prefix: phpipam
   dbnode:
+    volumes:
+      - "dbnode-mysql-data:/var/lib/mysql"
     logging:
       driver: awslogs
       options:
         awslogs-region: us-east-2
         awslogs-group: secom-phpipam
         awslogs-stream-prefix: dbnode
+volumes:
+  dbnode-mysql-data:
