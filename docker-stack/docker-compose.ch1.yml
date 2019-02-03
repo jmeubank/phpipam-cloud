@@ -1,7 +1,6 @@
 version: '3'
 services:
   phpipam:
-    restart: always
     ports:
       - "8050:80"
     logging:
@@ -9,13 +8,14 @@ services:
         max-size: "10m"
         max-file: "10"
   dbnode:
-    restart: always
     volumes:
-      - "./mysql-data:/var/lib/mysql"
+      - "dbnode-mysql-data:/var/lib/mysql"
     logging:
       options:
         max-size: "10m"
         max-file: "10"
+volumes:
+  dbnode-mysql-data:
 networks:
   default:
     driver: bridge

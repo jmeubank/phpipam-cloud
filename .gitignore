@@ -1,5 +1,6 @@
 mariadb-galera-swarm/*
 mariadb-galera-swarm-old/*
 phpipam-docker/phpipam/*
-docker-stack/xms1.env
 docker-stack/aws-ecs.env
+docker-stack/ch1.env
+docker-stack/xms1.env
