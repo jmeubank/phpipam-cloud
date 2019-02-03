@@ -1,3 +1,4 @@
+*.code-workspace
 .venv
 mariadb-galera-swarm/*
 mariadb-galera-swarm-old/*
