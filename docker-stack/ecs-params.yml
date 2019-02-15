@@ -15,5 +15,3 @@ run_params:
         - subnet-10b9e278
         - subnet-df1584a5
         - subnet-e6f109aa
-      security_groups: 
-        - sg-0dfed16b1ce2632b4
