@@ -8,6 +8,11 @@ task_definition:
     dbnode:
       essential: true
       mem_reservation: 268435456
+  docker_volumes:
+      - name: dbnode-mysql-data
+        scope: shared
+        autoprovision: true
+        driver: local
 run_params:
   network_configuration:
     awsvpc_configuration:
