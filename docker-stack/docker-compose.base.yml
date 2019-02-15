@@ -16,6 +16,7 @@ services:
       - "4568:4568"
       - "8080:8080"
       - "8081:8081"
+      - "8082:8082"
     environment:
       - NODE_ADDRESS
       - BOOTSTRAP_IF_ALONE
