@@ -1,4 +1,6 @@
 
+node ${GALERA_CLUSTER_ADDRS}
+
 master:
 curl 10s timeouts
 expose port 3309 in dockerfile
