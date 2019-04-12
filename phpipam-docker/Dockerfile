@@ -3,7 +3,10 @@ FROM luzifer/alpine-nginx-php
 # based in part on code from
 # https://github.com/pierrecdn/phpipam/blob/0f337b91751c237fffc51d16923f379f36b5950e/Dockerfile
 
-RUN apk add --no-cache iputils fping net-snmp-libs \
+RUN rm -rf /var/cache/apk/* && \
+    rm -rf /tmp/* && \
+    apk update && \
+    apk add --no-cache iputils fping net-snmp-libs \
      php7-pdo_mysql php7-session php7-sockets php7-openssl php7-gmp php7-ldap php7-mcrypt php7-simplexml php7-json \
      php7-gettext php7-pcntl php7-mbstring php7-snmp php7-gd php7-pear php7-ctype
 
@@ -33,8 +36,7 @@ RUN apk add --no-cache --virtual .build_deps curl gettext && \
 
 #    sed -i 's/;include_path = \".:\/php\/includes\"/include_path = \".:\/usr\/share\/php7\"/' /etc/php7/php.ini
 # Use system environment variables into config.php
-RUN cp ${WEB_REPO}/config.dist.php ${WEB_REPO}/config.php && \
-    chown nginx:www-data ${WEB_REPO}/app/admin/import-export/upload && \
+RUN chown nginx:www-data ${WEB_REPO}/app/admin/import-export/upload && \
     chown nginx:www-data ${WEB_REPO}/app/subnets/import-subnet/upload && \
     chown nginx:www-data ${WEB_REPO}/css/images/logo && \
     echo "include_path = \".:/usr/share/php7\"" >/etc/php7/conf.d/pear.ini && \
@@ -89,28 +91,34 @@ RUN cp ${WEB_REPO}/config.dist.php ${WEB_REPO}/config.php && \
     { \
       echo '[global]'; \
       echo 'error_log = /proc/self/fd/2'; \
-      echo; \
+      echo ; \
       echo '[www]'; \
       echo '; if we send this to /proc/self/fd/1, it never appears'; \
       echo 'access.log = /proc/self/fd/2'; \
       echo '; Ensure worker stdout and stderr are sent to the main error log.'; \
       echo 'catch_workers_output = yes'; \
-      echo; \
+      echo ; \
       echo '; Listen on a local socket since we are combining nginx and php in the same container for phpIPAM'; \
       echo 'listen = /tmp/php-fpm.sock'; \
       echo 'listen.owner = nginx'; \
       echo 'listen.group = www-data'; \
       echo '; Pass in database environment variables from outside.'; \
-      echo 'env[MYSQL_ENV_MYSQL_HOST] = $MYSQL_ENV_MYSQL_HOST'; \
-      echo 'env[MYSQL_ENV_MYSQL_USER] = $MYSQL_ENV_MYSQL_USER'; \
-      echo 'env[MYSQL_ENV_MYSQL_PASSWORD] = $MYSQL_ENV_MYSQL_PASSWORD'; \
-      echo 'env[MYSQL_ENV_MYSQL_PASSWORD_FILE] = $MYSQL_ENV_MYSQL_PASSWORD_FILE'; \
+      echo 'env[IPAM_DATABASE_HOST] = $IPAM_DATABASE_HOST'; \
+      echo 'env[IPAM_DATABASE_USER] = $IPAM_DATABASE_USER'; \
+      echo 'env[IPAM_DATABASE_PASS] = $IPAM_DATABASE_PASS'; \
+      echo 'env[IPAM_DATABASE_NAME] = $IPAM_DATABASE_NAME'; \
+      echo 'env[IPAM_DATABASE_PORT] = $IPAM_DATABASE_PORT'; \
+      echo 'env[IPAM_DATABASE_WEBHOST] = $IPAM_DATABASE_WEBHOST'; \
+      echo 'env[IPAM_DB_PASSWORD_FILE] = $IPAM_DB_PASSWORD_FILE'; \
     } | tee /etc/php7/php-fpm.d/zz_phpipam.conf && \
-    sed -i -e "s/\['host'\] = 'localhost'/\['host'\] = getenv(\"MYSQL_ENV_MYSQL_HOST\") ?: \"mysql\"/" \
-     -e "s/\['user'\] = 'phpipam'/\['user'\] = getenv(\"MYSQL_ENV_MYSQL_USER\") ?: \"root\"/" \
-     -e "s/\['pass'\] = 'phpipamadmin'/\['pass'\] = getenv(\"MYSQL_ENV_MYSQL_PASSWORD\")/" \
-     -e "s/\['port'\] = 3306;/\['port'\] = 3306;\n\n\$password_file = getenv(\"MYSQL_ENV_MYSQL_PASSWORD_FILE\");\nif(file_exists(\$password_file))\n\$db\['pass'\] = preg_replace(\"\/\\\\s+\/\", \"\", file_get_contents(\$password_file));/" \
-     ${WEB_REPO}/config.php && \
+    { \
+      echo 'require("config.docker.php");'; \
+      echo ; \
+      echo '$password_file = getenv("IPAM_DB_PASSWORD_FILE");'; \
+      echo 'if (file_exists($password_file))'; \
+      echo '  $db["pass"] = file_get_contents($password_file);'; \
+    } | tee ${WEB_REPO}/config.php && \
+    rm -fR ${WEB_REPO}/.git && \
     apk del .build_deps
 
 EXPOSE 80

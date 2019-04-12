@@ -3,10 +3,11 @@ services:
   phpipam:
     image: 146686453577.dkr.ecr.us-east-2.amazonaws.com/secom-phpipam:phpipam
     environment:
-      - MYSQL_ENV_MYSQL_HOST
-      - MYSQL_ENV_MYSQL_PASSWORD
+      - IPAM_DATABASE_HOST
+      - IPAM_DATABASE_PASS
       - NGINX_HOST=_
-      - MYSQL_ENV_MYSQL_USER=phpipam
+      - IPAM_DATABASE_USER=phpipam
+      - IPAM_DATABASE_NAME=phpipam
   dbnode:
     image: 146686453577.dkr.ecr.us-east-2.amazonaws.com/secom-phpipam:mariadb-galera-swarm
     ports:
