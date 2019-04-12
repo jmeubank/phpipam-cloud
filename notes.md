@@ -52,9 +52,6 @@ ecs-cli up --keypair xms1-root --capability-iam --size 1 --instance-type t2.micr
  --subnets subnet-10b9e278,subnet-df1584a5,subnet-e6f109aa
 
 
-docker build -t 146686453577.dkr.ecr.us-east-2.amazonaws.com/secom-phpipam:phpipam . || docker container prune -f
-
-
 
 openssl genrsa 4096 > ca-key.pem && \
 openssl req -new -x509 -nodes -days 3600 -key ca-key.pem -out ca-cert.pem -batch -subj "/CN=ca.local" && \
