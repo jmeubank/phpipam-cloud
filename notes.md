@@ -1,4 +1,7 @@
 
+docker save secom-phpipam:phpipam | bzip2 | pv | ssh deploy@208.123.128.43 'bunzip2 | docker load'
+docker save secom-phpipam:mariadb-galera-swarm | bzip2 | pv | ssh deploy@208.123.128.43 'bunzip2 | docker load'
+
 node ${GALERA_CLUSTER_ADDRS}
 
 master:
@@ -44,7 +47,7 @@ mysqld.sh:
 
 
 
-docker build -t 146686453577.dkr.ecr.us-east-2.amazonaws.com/secom-phpipam:mariadb-galera-swarm . || docker container prune -f
+docker build -t secom-phpipam:mariadb-galera-swarm . || docker container prune -f
 
 GALERA_ENV_START_MODE=seed docker-compose up dbnode
 
